@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Objects;
@@ -28,5 +29,11 @@ public class Handler {
         return Mono.just(Objects.requireNonNull(serverRequest.pathVariable("id")))
                 .flatMap(bookUseCase::get)
                 .flatMap(book -> ServerResponse.ok().bodyValue(book));
+    }
+
+    public Mono<ServerResponse> listenGETALLUseCase(ServerRequest serverRequest) {
+        Flux<Book> books = bookUseCase.getAll();
+        return ServerResponse.ok().body(books, Book.class);
+
     }
 }

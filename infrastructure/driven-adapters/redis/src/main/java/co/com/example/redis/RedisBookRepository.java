@@ -2,9 +2,10 @@ package co.com.example.redis;
 
 import co.com.example.model.Book;
 import co.com.example.model.gateway.BookRepository;
-import org.reactivecommons.utils.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -24,6 +25,12 @@ public class RedisBookRepository implements BookRepository {
     @Override
     public Mono<Book> get(String key) {
         return reactiveRedisComponent.get(BOOK_KEY, key).flatMap(d -> Mono.just(mapper.map(d, Book.class)));
+    }
+
+    @Override
+    public Flux<Book> getAll() {
+        return reactiveRedisComponent.get(BOOK_KEY).map(b -> mapper.map(b, Book.class))
+                .collectList().flatMapMany(Flux::fromIterable);
     }
 
 }
