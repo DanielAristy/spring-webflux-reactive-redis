@@ -33,4 +33,9 @@ public class RedisBookRepository implements BookRepository {
                 .collectList().flatMapMany(Flux::fromIterable);
     }
 
+    @Override
+    public Mono<Long> removeById(String key) {
+        return reactiveRedisComponent.remove(BOOK_KEY, key);
+    }
+
 }

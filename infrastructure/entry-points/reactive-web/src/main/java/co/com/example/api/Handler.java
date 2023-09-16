@@ -36,4 +36,11 @@ public class Handler {
         return ServerResponse.ok().body(books, Book.class);
 
     }
+
+    public Mono<ServerResponse> listenDELETEUseCase(ServerRequest serverRequest) {
+        return Mono.just(Objects.requireNonNull(serverRequest.pathVariable("id")))
+                .flatMap(bookUseCase::deleteById)
+                .flatMap(value -> ServerResponse.ok().bodyValue(value));
+
+    }
 }

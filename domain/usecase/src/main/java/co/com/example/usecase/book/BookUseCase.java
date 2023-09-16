@@ -22,4 +22,6 @@ public class BookUseCase {
     public Flux<Book> getAll() {
         return bookRepository.getAll();
     }
+
+    public Mono<Long> deleteById(String key){return bookRepository.removeById(key);}
 }
