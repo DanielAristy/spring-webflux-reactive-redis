@@ -4,6 +4,7 @@ import co.com.example.model.Book;
 import co.com.example.model.gateway.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.reactivecommons.utils.ObjectMapper;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -23,8 +24,11 @@ public class RedisBookRepository implements BookRepository {
     }
 
     @Override
+    @Cacheable(value = "books")
     public Mono<Book> get(String key) {
-        return reactiveRedisComponent.get(BOOK_KEY, key).flatMap(d -> Mono.just(mapper.map(d, Book.class)));
+        return reactiveRedisComponent.get(BOOK_KEY, key)
+                .flatMap(d -> Mono.just(mapper.map(d, Book.class)))
+                .cache();
     }
 
     @Override
